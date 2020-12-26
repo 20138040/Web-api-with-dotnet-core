@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using WebAPIUsingCore.Models;
 
 namespace WebAPIUsingCore.Controllers
 {
@@ -27,7 +26,7 @@ namespace WebAPIUsingCore.Controllers
         public IEnumerable<Department> GetAllDepartments()
         {
 
-            OfficeDBContext dBContext = new OfficeDBContext();
+            //OfficeDBContext dBContext = new OfficeDBContext();
 
             var res = _officeDB.Departments.ToList();
 

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WebAPIUsingCore.Models;
 
 namespace WebAPIUsingCore.Controllers
 {
@@ -14,7 +13,7 @@ namespace WebAPIUsingCore.Controllers
     {
         private readonly OfficeDBContext _officeDB;
 
-        public EmployeeController(OfficeDBContext dBContext)
+        public EmployeeController(OfficeDBContext dBContext) 
         {
             _officeDB = dBContext;
         }
