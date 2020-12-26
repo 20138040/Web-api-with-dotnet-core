@@ -2,22 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WebAPIUsingCore.Models;
 
 namespace WebAPIUsingCore.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]/")]
     public class DepartmentController : ControllerBase
     {
-       
-        private readonly ILogger<DepartmentController> _logger;
 
-        public DepartmentController(ILogger<DepartmentController> logger)
+        private readonly OfficeDBContext _officeDB;
+
+        public DepartmentController(OfficeDBContext dBContext)
         {
-            _logger = logger;
+            _officeDB = dBContext;
         }
 
         [HttpGet]
@@ -27,7 +29,7 @@ namespace WebAPIUsingCore.Controllers
 
             OfficeDBContext dBContext = new OfficeDBContext();
 
-            var res = dBContext.Departments.ToList();
+            var res = _officeDB.Departments.ToList();
 
 
             //var rng = new Random();
@@ -48,11 +50,11 @@ namespace WebAPIUsingCore.Controllers
         {
             try
             {
-                OfficeDBContext dBContext = new OfficeDBContext();
-                int id = dBContext.Departments.Max(x => x.DepartmentId);
+                //OfficeDBContext dBContext = new OfficeDBContext();
+                int id = _officeDB.Departments.Max(x => x.DepartmentId);
                 Department obj = new Department{ DepartmentId = id+1 , DepartmentName = dep.DepartmentName };
-                dBContext.Add(obj);
-                dBContext.SaveChanges();
+                _officeDB.Departments.Add(obj);
+                _officeDB.SaveChanges();
                 return "Added Successfully!!";
             }
             catch (Exception exp)
@@ -67,8 +69,8 @@ namespace WebAPIUsingCore.Controllers
         {
             try
             {
-                OfficeDBContext dBContext = new OfficeDBContext();
-                var obj = (from ci in dBContext.Departments
+                //OfficeDBContext dBContext = new OfficeDBContext();
+                var obj = (from ci in _officeDB.Departments
                           where ci.DepartmentId == department.DepartmentId
                           select ci).FirstOrDefault();
                 if(obj == null)
@@ -77,7 +79,7 @@ namespace WebAPIUsingCore.Controllers
                 }
                 obj.DepartmentName = department.DepartmentName;
                 //dBContext.Add(obj);
-                dBContext.SaveChanges();
+                _officeDB.SaveChanges();
                 return "Updated Successfully!!";
             }
             catch (Exception exp)
@@ -92,16 +94,16 @@ namespace WebAPIUsingCore.Controllers
         {
             try
             {
-                OfficeDBContext dBContext = new OfficeDBContext();
-                var obj = (from ci in dBContext.Departments
+                //OfficeDBContext dBContext = new OfficeDBContext();
+                var obj = (from ci in _officeDB.Departments
                            where ci.DepartmentName == departmentName
                            select ci).FirstOrDefault();
                 if (obj == null)
                 {
                     return "Not found data with department " + departmentName;
                 }
-                dBContext.Remove(obj);
-                dBContext.SaveChanges();
+                _officeDB.Departments.Remove(obj);
+                _officeDB.SaveChanges();
                 return "Deleted Successfully!!";
             }
             catch (Exception exp)

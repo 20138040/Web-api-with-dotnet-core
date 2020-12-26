@@ -12,15 +12,21 @@ namespace WebAPIUsingCore.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
+        private readonly OfficeDBContext _officeDB;
+
+        public EmployeeController(OfficeDBContext dBContext)
+        {
+            _officeDB = dBContext;
+        }
 
         [HttpGet]
         [Route("GetAllEmployees")]
         public IEnumerable<Employee> GetAllEmployees()
         {
 
-            OfficeDBContext dBContext = new OfficeDBContext();
+            //OfficeDBContext dBContext = new OfficeDBContext();
 
-            var res = dBContext.Employees.ToList();
+            var res = _officeDB.Employees.ToList();
             return res;
         }
 
@@ -30,12 +36,12 @@ namespace WebAPIUsingCore.Controllers
         {
             try
             {
-                OfficeDBContext dBContext = new OfficeDBContext();
-                int id = dBContext.Employees.Max(x => x.EmployeeId);
+                //OfficeDBContext dBContext = new OfficeDBContext();
+                int id = _officeDB.Employees.Max(x => x.EmployeeId);
                 //Employee obj = new Employee { EmployeeId = id + 1, DepartmentName = dep.DepartmentName };
                 employee.EmployeeId = id + 1;
-                dBContext.Add(employee);
-                dBContext.SaveChanges();
+                _officeDB.Employees.Add(employee);
+                _officeDB.SaveChanges();
                 return "Added Successfully!!";
             }
             catch (Exception exp)
@@ -50,8 +56,8 @@ namespace WebAPIUsingCore.Controllers
         {
             try
             {
-                OfficeDBContext dBContext = new OfficeDBContext();
-                var obj = (from ci in dBContext.Employees
+                //OfficeDBContext dBContext = new OfficeDBContext();
+                var obj = (from ci in _officeDB.Employees
                            where ci.EmployeeId == employee.EmployeeId
                            select ci).FirstOrDefault();
                 if (obj == null)
@@ -62,8 +68,8 @@ namespace WebAPIUsingCore.Controllers
                 obj.Department = employee.Department;
                 obj.DateOfJoining = employee.DateOfJoining;
                 obj.FilePath = employee.FilePath;
-           
-                dBContext.SaveChanges();
+
+                _officeDB.SaveChanges();
                 return "Updated Successfully!!";
             }
             catch (Exception exp)
@@ -78,16 +84,16 @@ namespace WebAPIUsingCore.Controllers
         {
             try
             {
-                OfficeDBContext dBContext = new OfficeDBContext();
-                var obj = (from ci in dBContext.Employees
+                //OfficeDBContext dBContext = new OfficeDBContext();
+                var obj = (from ci in _officeDB.Employees
                            where ci.EmployeeName == name
                            select ci).FirstOrDefault();
                 if (obj == null)
                 {
                     return "Not found data with employee name " + name;
                 }
-                dBContext.Remove(obj);
-                dBContext.SaveChanges();
+                _officeDB.Employees.Remove(obj);
+                _officeDB.SaveChanges();
                 return "Deleted Successfully!!";
             }
             catch (Exception exp)
