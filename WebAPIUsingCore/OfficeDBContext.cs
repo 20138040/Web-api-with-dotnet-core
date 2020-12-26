@@ -1,11 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
 
 #nullable disable
 
-namespace WebAPIUsingCore.Models
+namespace WebAPIUsingCore
 {
     public partial class OfficeDBContext : DbContext
     {
@@ -20,20 +19,13 @@ namespace WebAPIUsingCore.Models
 
         public virtual DbSet<Department> Departments { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-
-                IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-                optionsBuilder.UseSqlServer(configuration.GetConnectionString("SqlConnectionString"));
-                //optionsBuilder.UseSqlServer("Data Source=BAN-L170667\\LOCALHOST;Database=OfficeDB;Trusted_Connection=True;Connection Timeout=1000000;");
-                //optionsBuilder.UseSqlServer("Data Source=localhost\\MSSQLSERVER01;Database=myDatabase;Trusted_Connection=True;Connection Timeout=1000000;");
+                optionsBuilder.UseSqlServer("name=SqlConnectionString");
             }
         }
 
@@ -72,6 +64,18 @@ namespace WebAPIUsingCore.Models
 
                 entity.Property(e => e.FilePath)
                     .HasMaxLength(500)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Password)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
             });
 
